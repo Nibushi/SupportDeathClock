@@ -31,6 +31,21 @@ function Add-ArgumentCompleters{
         }
     }
 
+    $acTags = {
+        param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
+
+        $wordToComplete = $wordToComplete.trim("'")
+
+        $url = "https://endoflife.date/api/v1/tags"
+
+        $tags = Invoke-RestMethod -Uri $url
+        $tagNames = $tags.result.name | Sort-Object
+
+        $tagNames | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
+            [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
+        }
+    }
+
     # Register argument completer to specific command and (non-standard) parameters
     #Register-ArgumentCompleter -CommandName "Get-SDCProductInfo" -ParameterName "ProductName" -ScriptBlock $acProductName
 
@@ -55,6 +70,16 @@ function Add-ArgumentCompleters{
                 CommandName = $command.Name
                 ParameterName = 'Category'
                 ScriptBlock = $acCategory
+            }
+
+            Register-ArgumentCompleter @splat
+        }
+
+        if ($command.Parameters.ContainsKey('Tag')) {
+            $splat = @{
+                CommandName = $command.Name
+                ParameterName = 'Tag'
+                ScriptBlock = $acTags
             }
 
             Register-ArgumentCompleter @splat
