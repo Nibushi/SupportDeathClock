@@ -40,6 +40,6 @@ function Get-SDCProductInfo {
     }
 
     Write-Verbose "Product information for '$ProductName' retrieved successfully."
-    return $product
+    return $product.result
 
 }
