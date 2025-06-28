@@ -12,9 +12,9 @@ function Get-SDCProductReleaseNumber {
     # Create a generic list to hold release information
     $releaseInfo = [System.Collections.Generic.List[PSCustomObject]]::new()
 
-    foreach($name in $productInfo.releases.name){
+    foreach($product in $productInfo){
         $releaseInfo.Add([PSCustomObject]@{
-            Release = $name
+            Release = $product.release
         })
     }
 

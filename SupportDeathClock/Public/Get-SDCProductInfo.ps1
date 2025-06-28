@@ -39,7 +39,30 @@ function Get-SDCProductInfo {
         return
     }
 
+
+    # Convert the product information to a PowerShell object
+    $productReleaseInfo = [System.Collections.Generic.List[PSCustomObject]]::new()
+
+    foreach($release in $product.result.releases) {
+        $relObj = [PSCustomObject]@{
+            Release = $release.name
+            Released = $release.releaseDate
+            OutOfActiveSupport = $release.isEoas
+            ActiveSupportEnds = $release.eoasFrom
+            EndOfLife = $release.isEol
+            SecuritySupportEnds = $release.eolFrom
+            Maintained = $release.isMaintained
+            LatestBuild = $release.latest.name
+            LatestBuildReleaseDate = $release.latest.date
+            LatestBuildUrl = $release.latest.link
+            IsLts = $release.isLts
+            LtsFromDate = $release.ltsFrom
+        }
+
+        $productReleaseInfo.Add($relObj)
+    }
+
     Write-Verbose "Product information for '$ProductName' retrieved successfully."
-    return $product.result
+    $productReleaseInfo
 
 }
