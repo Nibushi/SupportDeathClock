@@ -5,6 +5,7 @@ function Get-SDCProductInfo {
 
     .DESCRIPTION
         This function fetches a list of products from the endoflife.date API and returns it as a PowerShell object.
+        Uses either the /products/{productName} endpoint to retrieve specific product information or the /products/{productName}/releases/latest endpoint to get the latest release information.
 
     .EXAMPLE
         Get-SDCProductList

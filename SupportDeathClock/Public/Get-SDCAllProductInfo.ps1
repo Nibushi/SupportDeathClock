@@ -5,6 +5,7 @@ function Get-SDCAllProductInfo {
 
     .DESCRIPTION
         This function fetches a list of all products from the endoflife.date API and returns it as a PowerShell object.
+        Calls the /products/full endpoint to retrieve comprehensive product information.
 
     .EXAMPLE
        Get-SDCAllProductInfo
@@ -29,5 +30,5 @@ function Get-SDCAllProductInfo {
     }
 
     Write-Verbose "All Product information retrieved successfully."
-    return $products
+    return $products.result
 }
