@@ -12,3 +12,11 @@ foreach ($import in @($public + $private)) {
 }
 
 Export-ModuleMember -Function $public.Basename
+
+# Register argument completers
+try {
+    Add-ArgumentCompleters
+}
+catch {
+    Write-Error "Failed to register argument completers: $_"
+}
