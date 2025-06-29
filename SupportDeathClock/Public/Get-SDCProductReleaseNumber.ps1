@@ -7,14 +7,14 @@ function Get-SDCProductReleaseNumber {
     )
 
     # Get product information to ensure the product exists
-    $productInfo = Get-SDCProductInfo -ProductName $ProductName
+    $productInfo = @(Get-SDCProductInfo -ProductName $ProductName)
 
     # Create a generic list to hold release information
     $releaseInfo = [System.Collections.Generic.List[PSCustomObject]]::new()
 
     foreach($product in $productInfo){
         $releaseInfo.Add([PSCustomObject]@{
-            Release = $product.release
+            Release = $product.prodRelease
         })
     }
 

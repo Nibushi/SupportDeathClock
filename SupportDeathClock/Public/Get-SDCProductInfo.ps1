@@ -14,9 +14,15 @@ function Get-SDCProductInfo {
     #>
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, Position=0, ParameterSetName = 'Default')]
+        [Parameter(Mandatory = $true, Position=0, ParameterSetName = 'SpecificRelease')]
+        [Parameter(Mandatory = $true, Position=0, ParameterSetName = 'LatestRelease')]
         [string]$ProductName,
 
+        [Parameter(Mandatory = $true, Position=1, ParameterSetName = 'SpecificRelease')]
+        [string]$Release,
+
+        [Parameter(Mandatory = $true, ParameterSetName = 'LatestRelease')]
         [switch]$Latest
     )
 
@@ -24,11 +30,16 @@ function Get-SDCProductInfo {
         $url = "https://endoflife.date/api/v1/products/$($ProductName)/releases/latest"
     }
     else {
-        $url = "https://endoflife.date/api/v1/products/$($ProductName)"
+        # If a value is provided for the Release parameter, use it to construct the URL
+        if ($PSBoundParameters.ContainsKey('Release') -and -not [string]::IsNullOrWhiteSpace($Release)) {
+            $url = "https://endoflife.date/api/v1/products/$($ProductName)/releases/$($Release)"
+        } else {
+            $url = "https://endoflife.date/api/v1/products/$($ProductName)"
+        }
     }
 
     try {
-        $product = Invoke-RestMethod -Uri $url -ErrorAction Stop
+        $product = @(Invoke-RestMethod -Uri $url -ErrorAction Stop)
     }
     catch {
         Write-Error "Failed to retrieve product information for '$ProductName'. Error: $_"
@@ -40,26 +51,17 @@ function Get-SDCProductInfo {
     }
 
 
-    # Convert the product information to a PowerShell object
     $productReleaseInfo = [System.Collections.Generic.List[PSCustomObject]]::new()
 
-    foreach($release in $product.result.releases) {
-        $relObj = [PSCustomObject]@{
-            Release = $release.name
-            Released = $release.releaseDate
-            OutOfActiveSupport = $release.isEoas
-            ActiveSupportEnds = $release.eoasFrom
-            EndOfLife = $release.isEol
-            SecuritySupportEnds = $release.eolFrom
-            Maintained = $release.isMaintained
-            LatestBuild = $release.latest.name
-            LatestBuildReleaseDate = $release.latest.date
-            LatestBuildUrl = $release.latest.link
-            IsLts = $release.isLts
-            LtsFromDate = $release.ltsFrom
+    if($null -eq $product.result.releases){
+        $releaseAsObj = Format-ProductResultAsObject -ProductResult $product.result
+        $productReleaseInfo.Add($releaseAsObj)
+    } else {
+        # Process each release in the product response
+        foreach ($prodRelease in $product.result.releases) {
+            $releaseAsObj = Format-ProductResultAsObject -ProductResult $prodRelease
+            $productReleaseInfo.Add($releaseAsObj)
         }
-
-        $productReleaseInfo.Add($relObj)
     }
 
     Write-Verbose "Product information for '$ProductName' retrieved successfully."
