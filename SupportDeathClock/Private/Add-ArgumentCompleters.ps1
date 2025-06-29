@@ -46,6 +46,7 @@ function Add-ArgumentCompleters{
         }
     }
 
+
     # Register argument completer to specific command and (non-standard) parameters
     #Register-ArgumentCompleter -CommandName "Get-SDCProductInfo" -ParameterName "ProductName" -ScriptBlock $acProductName
 
