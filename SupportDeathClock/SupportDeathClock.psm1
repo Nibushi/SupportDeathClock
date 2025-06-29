@@ -13,7 +13,13 @@ foreach ($import in @($public + $private)) {
 
 Export-ModuleMember -Function $public.Basename
 
-# Register argument completers
+# Check if the endoflife.date API is reachable
+if (-not (Test-ConnectionToEOLDate)) {
+    Write-Error "The endoflife.date API is not reachable. Please check your internet connection or the API status."
+    return
+}
+
+# Register argument completers for the module
 try {
     Add-ArgumentCompleters
 }

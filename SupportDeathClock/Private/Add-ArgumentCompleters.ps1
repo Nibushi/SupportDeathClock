@@ -46,6 +46,24 @@ function Add-ArgumentCompleters{
         }
     }
 
+    $acRelease = {
+        param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
+
+        $wordToComplete = $wordToComplete.trim("'")
+
+        if($fakeBoundParameters.ContainsKey('ProductName')){
+            $productName = $fakeBoundParameters['ProductName']
+            $url = "https://endoflife.date/api/v1/products/$($productName)"
+
+            $product = Invoke-RestMethod -Uri $url
+            $releaseNames = $product.result.releases.name
+
+            $releaseNames | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
+                [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
+            }
+        }
+    }
+
 
     # Register argument completer to specific command and (non-standard) parameters
     #Register-ArgumentCompleter -CommandName "Get-SDCProductInfo" -ParameterName "ProductName" -ScriptBlock $acProductName
@@ -81,6 +99,16 @@ function Add-ArgumentCompleters{
                 CommandName = $command.Name
                 ParameterName = 'Tag'
                 ScriptBlock = $acTags
+            }
+
+            Register-ArgumentCompleter @splat
+        }
+
+        if ($command.Parameters.ContainsKey('Release')) {
+            $splat = @{
+                CommandName = $command.Name
+                ParameterName = 'Release'
+                ScriptBlock = $acRelease
             }
 
             Register-ArgumentCompleter @splat
