@@ -11,7 +11,7 @@ function Format-ProductResultAsObject{
     $relObj = [PSCustomObject]@{
         ProductName = $ProductName
         prodRelease = $ProductResult.name
-        prodReleased = $ProductResult.prodreleaseDate
+        prodReleased = $ProductResult.releaseDate
         OutOfActiveSupport = $ProductResult.isEoas
         ActiveSupportEnds = $ProductResult.eoasFrom
         EndOfLife = $ProductResult.isEol
