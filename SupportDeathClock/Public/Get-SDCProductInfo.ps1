@@ -54,12 +54,12 @@ function Get-SDCProductInfo {
     $productReleaseInfo = [System.Collections.Generic.List[PSCustomObject]]::new()
 
     if($null -eq $product.result.releases){
-        $releaseAsObj = Format-ProductResultAsObject -ProductResult $product.result
+        $releaseAsObj = Format-ProductResultAsObject -ProductName $ProductName -ProductResult $product.result
         $productReleaseInfo.Add($releaseAsObj)
     } else {
         # Process each release in the product response
         foreach ($prodRelease in $product.result.releases) {
-            $releaseAsObj = Format-ProductResultAsObject -ProductResult $prodRelease
+            $releaseAsObj = Format-ProductResultAsObject -ProductName $ProductName -ProductResult $prodRelease
             $productReleaseInfo.Add($releaseAsObj)
         }
     }

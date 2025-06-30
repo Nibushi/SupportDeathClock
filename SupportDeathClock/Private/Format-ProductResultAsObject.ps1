@@ -1,12 +1,17 @@
 function Format-ProductResultAsObject{
+    [CmdletBinding()]
     param(
+        [Parameter(Mandatory = $true)]
+        [string]$ProductName,
+
         [Parameter(Mandatory = $true)]
         [object]$ProductResult
     )
 
     $relObj = [PSCustomObject]@{
-            prodRelease = $ProductResult.name
-            prodReleased = $ProductResult.prodreleaseDate
+        ProductName = $ProductName
+        prodRelease = $ProductResult.name
+        prodReleased = $ProductResult.prodreleaseDate
         OutOfActiveSupport = $ProductResult.isEoas
         ActiveSupportEnds = $ProductResult.eoasFrom
         EndOfLife = $ProductResult.isEol
