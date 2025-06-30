@@ -29,6 +29,15 @@ function Get-SDCAllProductInfo {
         return
     }
 
+    $productReleaseInfo = [System.Collections.Generic.List[PSCustomObject]]::new()
+
+    foreach($result in $products.result) {
+        foreach ($prodRelease in $result.releases) {
+            $releaseAsObj = Format-ProductResultAsObject -ProductName $result.name -ProductResult $prodRelease
+            $productReleaseInfo.Add($releaseAsObj)
+        }
+    }
+
     Write-Verbose "All Product information retrieved successfully."
-    return $products.result
+    return $productReleaseInfo
 }
